@@ -89,6 +89,57 @@ export default function ProductsDemo() {
         localStorage.setItem("данные2023", JSON.stringify(products) )
     },[products])
 
+
+    ///////////////////////////////
+    //Фильтры
+    ///////////////////////////////
+    const [filters, setFilters] = useState(null);
+    const [globalFilterValue, setGlobalFilterValue] = useState('');
+
+    const clearFilter = () => {
+        initFilters();
+    };
+
+    const onGlobalFilterChange = (e) => {
+        const value = e.target.value;
+        let _filters = { ...filters };
+
+        _filters['global'].value = value;
+
+        setFilters(_filters);
+        setGlobalFilterValue(value);
+    };
+
+    const initFilters = () => {
+        setFilters({
+            global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+            name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+            'country.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+            representative: { value: null, matchMode: FilterMatchMode.IN },
+            date: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
+            balance: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
+            status: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
+            activity: { value: null, matchMode: FilterMatchMode.BETWEEN },
+            verified: { value: null, matchMode: FilterMatchMode.EQUALS }
+        });
+        setGlobalFilterValue('');
+    };
+
+    const renderHeader = () => {
+        return (
+            <div className="flex justify-content-between">
+                <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined onClick={clearFilter} />
+                <span className="p-input-icon-left">
+                    <i className="pi pi-search" />
+                    <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Keyword Search" />
+                </span>
+            </div>
+        );
+    };
+
+    ///////////////////////////////
+    ///////////////////////////////
+
     //<<<<<Поиск в базе
     function searchCostum(searchKey, value){
         let findCostum = dataCostumes.find(item => item[searchKey] === String(value))
@@ -534,6 +585,8 @@ export default function ProductsDemo() {
                     <Button type="button" icon="pi pi-file-export" severity="info" rounded onClick={exportData} data-pr-tooltip="JSON" />
                 {/* </div> */}
             </span>
+
+            {renderHeader()}    
         </div>
     );
     // Футер для сохранения новой и редактирования имеющейся записи
@@ -567,28 +620,29 @@ export default function ProductsDemo() {
                 <DataTable ref={dt} value={products} selection={selectedProducts} onSelectionChange={(e) => setSelectedProducts(e.value)}
                         dataKey="id"  paginator rows={10} rowsPerPageOptions={[5, 10, 25]} size='small'
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products" globalFilter={globalFilter} header={header}>
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products" globalFilter={globalFilter}
+                        filters={filters} header={header}>
                             
                     <Column selectionMode="multiple" exportable={false}></Column>
-                    <Column field="ПорядковыйНомер" header="Порядковый №" sortable style={{ minWidth: '1rem' }}></Column>
-                    <Column field="Номер" header="№" sortable style={{ minWidth: '1rem' }}></Column>
-                    <Column field="Имя" header="Название" sortable style={{ minWidth: '6rem' }}></Column>
-                    <Column field="Дата" header="Дата" body={dateBodyTemplate} sortable style={{ minWidth: '6rem' }}></Column>
-                    <Column field="ПоловинаДня" header="AM/PM" body={iconBodyTemplate} sortable tyle={{ width: '1rem' }}></Column>
+                    <Column field="ПорядковыйНомер" header="Порядковый №" sortable filter style={{ minWidth: '1rem' }}></Column>
+                    <Column field="Номер" header="№" sortable filter filterPlaceholder="Поиск по номерам" style={{ minWidth: '1rem' }}></Column>
+                    <Column field="Имя" header="Название" sortable filter filterPlaceholder="Поиск по названию" style={{ minWidth: '6rem' }}></Column>
+                    <Column field="Дата" header="Дата" body={dateBodyTemplate} sortable filter style={{ minWidth: '6rem' }}></Column>
+                    <Column field="ПоловинаДня" header="AM/PM" body={iconBodyTemplate} sortable filter tyle={{ width: '1rem' }}></Column>
                     
-                    <Column field="Клиент" header="Клиент" sortable style={{ minWidth: '10rem' }}></Column>
-                    <Column field="Телефон" header="Телефон" sortable style={{ minWidth: '8rem' }}></Column>
-                    <Column field="Адрес" header="Адрес" sortable style={{ minWidth: '6rem' }}></Column>
-                    <Column field="Залог" header="Залог" sortable style={{ minWidth: '6rem' }}></Column>
-                    <Column field="Место" header="Место" sortable style={{ minWidth: '6rem' }}></Column>
-                    <Column field="ВремяМероприятия" header="Вр.Мер-я" sortable style={{ width: '1rem' }}></Column>
+                    <Column field="Клиент" header="Клиент" sortable filter style={{ minWidth: '10rem' }}></Column>
+                    <Column field="Телефон" header="Телефон" sortable filter style={{ minWidth: '8rem' }}></Column>
+                    <Column field="Адрес" header="Адрес" sortable filter style={{ minWidth: '6rem' }}></Column>
+                    <Column field="Залог" header="Залог" sortable filter style={{ minWidth: '6rem' }}></Column>
+                    <Column field="Место" header="Место" sortable filter style={{ minWidth: '6rem' }}></Column>
+                    <Column field="ВремяМероприятия" header="Вр.Мер-я" sortable filter style={{ width: '1rem' }}></Column>
 
-                    <Column field="Примечание" header="Примечание" sortable style={{ minWidth: '16rem' }}></Column>
+                    <Column field="Примечание" header="Примечание" sortable filter style={{ minWidth: '16rem' }}></Column>
                     <Column field="Фото" header="Фото" body={imageBodyTemplate}></Column>
-                    <Column field="Цена" header="Цена" body={priceBodyTemplate} sortable style={{ minWidth: '8rem' }}></Column>
+                    <Column field="Цена" header="Цена" body={priceBodyTemplate} sortable filter style={{ minWidth: '8rem' }}></Column>
                     {/* <Column field="category" header="Category" sortable style={{ minWidth: '10rem' }}></Column>
                     <Column field="rating" header="Reviews" body={ratingBodyTemplate} sortable style={{ minWidth: '12rem' }}></Column> */}
-                    <Column field="Статус" header="Status" body={statusBodyTemplate} sortable style={{ minWidth: '12rem' }}></Column>
+                    <Column field="Статус" header="Status" body={statusBodyTemplate} sortable filter style={{ minWidth: '12rem' }}></Column>
                     <Column body={actionBodyTemplate} exportable={false} style={{ minWidth: '12rem' }}></Column>
 
                 </DataTable>

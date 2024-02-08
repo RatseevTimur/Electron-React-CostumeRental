@@ -13,7 +13,8 @@ import DataTable from './pages/data/DataProkat.js';
 
 // import './App.css';
 
-import Stats from "../../pages/stats/Stats.js"
+import Stats from "./pages/stats/Stats.js"
+import Filters from "./pages/stats/filtres.js"
 
 import 'primereact/resources/themes/lara-light-indigo/theme.css';   // theme
 import 'primeflex/primeflex.css';                                   // css utility
@@ -72,8 +73,10 @@ export default function App() {
         <Route path="/table" element={<EddTable />} />
         <Route path="/prime" element={<Prime />} />
         <Route path="/primemini" element={<PrimeMini />} /> */}
+        <Route path="/" element={<DataTable />} />
         <Route path="/costumers-table" element={<CostumersTable />} />
-        <Route path="/data" element={<DataTable />} />
+        <Route path="/stats" element={<Stats />} />
+        <Route path="/filters" element={<Filters />} />
 
       </Routes>
     </Router>

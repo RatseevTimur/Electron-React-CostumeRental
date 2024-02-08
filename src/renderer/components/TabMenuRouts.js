@@ -10,9 +10,10 @@ const TabMenuRouts = () => {
 
 
     const items = [
-        {label: 'Учет', icon: 'pi pi-fw pi-bars', href: 'data'},
+        {label: 'Учет', icon: 'pi pi-fw pi-bars', href: ''},
         {label: 'База', icon: 'pi pi-database', href: 'costumers-table'},
-        {label: 'Статистика по Костюмам', icon: 'pi pi-chart-bar', href: 'according-to-Costumes'}
+        {label: 'Статистика по Костюмам', icon: 'pi pi-chart-bar', href: 'stats'},
+        {label: 'Фильтры', icon: 'pi pi-chart-bar', href: 'filters'}
     ];
 
    const navigator = (e) => {
